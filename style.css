@@ -1,0 +1,593 @@
+/* =====================================================
+   EZOOGNÓSIA DOS BOVINOS
+   ESTILO GERAL
+   ===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+
+    background: linear-gradient(
+        135deg,
+        #0f2027,
+        #203a43,
+        #2c5364
+    );
+
+    min-height: 100vh;
+
+    padding: 20px;
+
+    color: #222;
+}
+
+
+/* =====================================================
+   CONTAINER PRINCIPAL
+   ===================================================== */
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    background: white;
+
+    border-radius: 22px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+
+/* =====================================================
+   CABEÇALHO
+   ===================================================== */
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    color: #1b5e20;
+
+    font-size: 36px;
+
+    margin-bottom: 8px;
+}
+
+header p {
+    color: #666;
+
+    font-size: 20px;
+}
+
+
+/* =====================================================
+   SELEÇÃO DO MODO
+   ===================================================== */
+
+.selecao-animal {
+    text-align: center;
+
+    margin-bottom: 25px;
+}
+
+.selecao-animal h2 {
+    color: #1b5e20;
+
+    font-size: 24px;
+
+    margin-bottom: 18px;
+}
+
+.botoes-animal {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+
+    max-width: 900px;
+
+    margin: 0 auto;
+}
+
+.botoes-animal button {
+    border: none;
+
+    padding: 16px 12px;
+
+    border-radius: 14px;
+
+    color: white;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.botoes-animal button:hover {
+    transform: translateY(-2px);
+
+    filter: brightness(1.08);
+}
+
+#btnMacho {
+    background: #5d4037;
+}
+
+#btnFemea {
+    background: #ad1457;
+}
+
+#btnAleatorio {
+    background: #1565c0;
+}
+
+#btnDefinicao {
+    background: #ef6c00;
+}
+
+
+/* =====================================================
+   PLACAR
+   ===================================================== */
+
+.placar {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 10px;
+
+    text-align: center;
+
+    margin: 20px auto;
+
+    max-width: 750px;
+}
+
+.placar > div {
+    background: #f1f8e9;
+
+    border-radius: 12px;
+
+    padding: 12px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    color: #33691e;
+}
+
+#pontos,
+#vidas,
+#combo,
+#nivel {
+    display: block;
+
+    font-size: 25px;
+
+    margin-top: 4px;
+
+    color: #1b5e20;
+}
+
+
+/* =====================================================
+   ÁREA DA IMAGEM
+   ===================================================== */
+
+.imagem-area {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    margin: 20px auto 30px;
+}
+
+#animal {
+    display: block;
+
+    width: 100%;
+
+    max-width: 850px;
+
+    height: auto;
+
+    border-radius: 15px;
+
+    border: 3px solid #d0d0d0;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =====================================================
+   ÁREA DA PERGUNTA
+   ===================================================== */
+
+.pergunta-area {
+    text-align: center;
+
+    margin-top: 15px;
+}
+
+#pergunta {
+    color: #1b5e20;
+
+    font-size: 28px;
+
+    line-height: 1.4;
+
+    margin-bottom: 25px;
+}
+
+
+/* =====================================================
+   ALTERNATIVAS
+   ===================================================== */
+
+#alternativas {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 16px;
+
+    width: 100%;
+
+    max-width: 650px;
+
+    margin: 0 auto;
+}
+
+.alternativa {
+    border: 3px solid #ddd;
+
+    background: #f5f5f5;
+
+    color: #222;
+
+    border-radius: 15px;
+
+    padding: 20px;
+
+    min-height: 75px;
+
+    font-size: 27px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.alternativa:hover:not(:disabled) {
+    background: #e8f5e9;
+
+    border-color: #43a047;
+
+    transform: scale(1.02);
+}
+
+.alternativa:disabled {
+    cursor: default;
+}
+
+.alternativa.correta {
+    background: #43a047;
+
+    color: white;
+
+    border-color: #2e7d32;
+}
+
+.alternativa.errada {
+    background: #e53935;
+
+    color: white;
+
+    border-color: #c62828;
+}
+
+
+/* =====================================================
+   MENSAGEM
+   ===================================================== */
+
+.mensagem-area {
+    text-align: center;
+
+    margin-top: 25px;
+}
+
+#mensagem {
+    min-height: 35px;
+
+    font-size: 20px;
+
+    line-height: 1.5;
+
+    margin-bottom: 15px;
+}
+
+#proxima {
+    display: none;
+
+    border: none;
+
+    background: #1565c0;
+
+    color: white;
+
+    padding: 16px 28px;
+
+    border-radius: 14px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+#proxima:hover {
+    background: #0d47a1;
+
+    transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   DEFINIÇÃO
+   ===================================================== */
+
+.titulo-definicao {
+    display: block;
+
+    font-size: 26px;
+
+    font-weight: bold;
+
+    color: #1b5e20;
+
+    margin-bottom: 15px;
+}
+
+.texto-definicao {
+    display: block;
+
+    max-width: 850px;
+
+    margin: 0 auto;
+
+    padding: 20px;
+
+    background: #f5f5f5;
+
+    border-left: 5px solid #43a047;
+
+    border-radius: 12px;
+
+    color: #333;
+
+    font-size: 19px;
+
+    line-height: 1.6;
+
+    font-weight: normal;
+}
+
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 850px) {
+
+    .container {
+        padding: 22px;
+    }
+
+    header h1 {
+        font-size: 30px;
+    }
+
+    header p {
+        font-size: 18px;
+    }
+
+    .botoes-animal {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    #pergunta {
+        font-size: 25px;
+    }
+
+}
+
+
+/* =====================================================
+   CELULAR
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 8px;
+    }
+
+    .container {
+        padding: 15px;
+
+        border-radius: 16px;
+    }
+
+    header {
+        margin-bottom: 18px;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    header p {
+        font-size: 16px;
+    }
+
+    .selecao-animal h2 {
+        font-size: 20px;
+    }
+
+    .botoes-animal {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 8px;
+    }
+
+    .botoes-animal button {
+        font-size: 14px;
+
+        padding: 14px 6px;
+
+        min-height: 58px;
+    }
+
+    .placar {
+        font-size: 20px;
+
+        padding: 12px;
+
+        margin: 15px auto;
+    }
+
+    .imagem-area {
+        margin: 15px auto 20px;
+    }
+
+    #animal {
+        border-width: 2px;
+
+        border-radius: 10px;
+    }
+
+    #pergunta {
+        font-size: 21px;
+
+        line-height: 1.4;
+
+        margin-bottom: 18px;
+    }
+
+    #alternativas {
+        grid-template-columns: 1fr 1fr;
+
+        gap: 10px;
+    }
+
+    .alternativa {
+        min-height: 65px;
+
+        padding: 14px 8px;
+
+        font-size: 22px;
+
+        border-radius: 12px;
+    }
+
+    #mensagem {
+        font-size: 17px;
+    }
+
+    #proxima {
+        width: 100%;
+
+        padding: 15px;
+
+        font-size: 17px;
+    }
+
+    .titulo-definicao {
+        font-size: 20px;
+    }
+
+    .texto-definicao {
+        font-size: 16px;
+
+        padding: 15px;
+
+        text-align: left;
+    }
+    .placar {
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 8px;
+}
+
+.placar > div {
+    font-size: 15px;
+
+    padding: 10px;
+}
+
+#pontos,
+#vidas,
+#combo,
+#nivel {
+    font-size: 21px;
+ }   
+}
+
+
+/* =====================================================
+   CELULARES MUITO PEQUENOS
+   ===================================================== */
+
+@media (max-width: 380px) {
+
+    header h1 {
+        font-size: 22px;
+    }
+
+    .botoes-animal button {
+        font-size: 12px;
+    }
+
+    #pergunta {
+        font-size: 19px;
+    }
+
+    .alternativa {
+        font-size: 20px;
+
+        min-height: 60px;
+    }
+}

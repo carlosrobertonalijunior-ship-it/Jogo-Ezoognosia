@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ezoognósia dos Bovinos</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <header>
+            <h1>🐄 Ezoognósia dos Bovinos</h1>
+            <p>Quiz de Descrição Zootécnica</p>
+        </header>
+
+        <!-- ESCOLHA DO ANIMAL -->
+        <section class="selecao-animal">
+
+            <h2>Escolha o modo de estudo</h2>
+
+            <div class="botoes-animal">
+
+    <button id="btnMacho">
+        🐂 Macho
+    </button>
+
+    <button id="btnFemea">
+        🐄 Fêmea
+    </button>
+
+    <button id="btnAleatorio">
+        🔀 Aleatório
+    </button>
+
+    <button id="btnDefinicao">
+        📖 Definição → Estrutura
+    </button>
+
+</div>
+
+        </section>
+
+        <!-- PLACAR -->
+        <section class="placar">
+
+    <div>
+        ⭐ Pontos:
+        <span id="pontos">0</span>
+    </div>
+
+    <div>
+        ❤️ Vidas:
+        <span id="vidas">3</span>
+    </div>
+
+    <div>
+        🔥 Combo:
+        <span id="combo">0</span>
+    </div>
+
+    <div>
+        🏆 Nível:
+        <span id="nivel">1</span>
+    </div>
+
+</section>
+        <!-- IMAGEM -->
+        <section class="imagem-area">
+
+            <img
+                id="animal"
+                src="imagens/boi_numerado.png"
+                alt="Bovino com regiões zootécnicas numeradas">
+
+        </section>
+
+        <!-- PERGUNTA -->
+        <section class="pergunta-area">
+
+            <h2 id="pergunta">
+                Escolha Macho, Fêmea ou Aleatório para começar.
+            </h2>
+
+            <div id="alternativas"></div>
+
+        </section>
+
+        <!-- MENSAGEM -->
+        <section class="mensagem-area">
+
+            <div id="mensagem"></div>
+
+            <button id="proxima">
+                Próxima pergunta →
+            </button>
+
+        </section>
+
+    </main>
+
+    <script src="perguntas.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>
