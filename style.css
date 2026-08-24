@@ -1,7 +1,7 @@
-/* =====================================================
+/* =========================================================
    EZOOGNÓSIA DOS BOVINOS
-   ESTILO GERAL
-   ===================================================== */
+   INTERFACE MODERNA
+   ========================================================= */
 
 * {
     margin: 0;
@@ -9,85 +9,256 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
+:root {
+    --verde: #1b5e20;
+    --verde-claro: #eaf6eb;
+    --verde-medio: #2e7d32;
 
-    background: linear-gradient(
-        135deg,
-        #0f2027,
-        #203a43,
-        #2c5364
-    );
+    --azul: #1565c0;
+    --rosa: #ad1457;
+    --marrom: #5d4037;
+    --laranja: #ef6c00;
+
+    --fundo: #eef3ef;
+    --texto: #263238;
+    --cinza: #6b7280;
+    --borda: #dfe5e1;
+
+    --sombra:
+        0 12px 35px rgba(22, 40, 27, 0.10);
+}
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+body {
+    font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dfeee2 0%,
+            #eef3ef 45%,
+            #e7edf3 100%
+        );
 
     min-height: 100vh;
 
-    padding: 20px;
+    color: var(--texto);
 
-    color: #222;
+    padding: 28px 18px;
 }
 
-
-/* =====================================================
-   CONTAINER PRINCIPAL
-   ===================================================== */
+/* =========================================================
+   CONTAINER
+   ========================================================= */
 
 .container {
     width: 100%;
-    max-width: 1100px;
+    max-width: 1080px;
 
     margin: 0 auto;
 
-    background: white;
+    background: #ffffff;
 
-    border-radius: 22px;
+    border-radius: 28px;
 
-    padding: 30px;
+    box-shadow: var(--sombra);
 
-    box-shadow:
-        0 10px 40px rgba(0, 0, 0, 0.3);
+    padding: 28px;
+
+    border: 1px solid rgba(255,255,255,.8);
 }
 
-
-/* =====================================================
+/* =========================================================
    CABEÇALHO
-   ===================================================== */
+   ========================================================= */
 
 header {
     text-align: center;
-    margin-bottom: 25px;
+
+    margin-bottom: 20px;
 }
 
 header h1 {
-    color: #1b5e20;
+    color: var(--verde);
 
-    font-size: 36px;
+    font-size: 34px;
 
-    margin-bottom: 8px;
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+
+    margin-bottom: 5px;
 }
 
 header p {
-    color: #666;
+    color: var(--cinza);
 
-    font-size: 20px;
+    font-size: 16px;
 }
 
+/* =========================================================
+   ÁREA DO JOGADOR
+   ========================================================= */
 
-/* =====================================================
+.jogador {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 16px;
+
+    padding: 14px 16px;
+
+    background: #f7faf7;
+
+    border: 1px solid var(--borda);
+
+    border-radius: 16px;
+
+    margin-bottom: 18px;
+}
+
+.jogador label {
+    color: var(--verde);
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.jogador-controle {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex: 1;
+
+    justify-content: flex-end;
+}
+
+#nomeJogador {
+    width: 230px;
+
+    padding: 11px 14px;
+
+    border:
+        1px solid #cfd8d1;
+
+    border-radius: 10px;
+
+    background: white;
+
+    font-size: 15px;
+
+    color: var(--texto);
+
+    outline: none;
+
+    transition: .2s;
+}
+
+#nomeJogador:focus {
+    border-color: var(--verde-medio);
+
+    box-shadow:
+        0 0 0 3px rgba(46,125,50,.10);
+}
+
+#btnSalvarNome {
+    background: var(--verde-medio);
+
+    color: white;
+
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 11px 18px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+#btnSalvarNome:hover {
+    background: #256a29;
+
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   RANKING
+   ========================================================= */
+
+.ranking {
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: -8px;
+
+    margin-bottom: 18px;
+}
+
+#btnRanking {
+    border: none;
+
+    background: transparent;
+
+    color: #8a6a00;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    padding: 5px 8px;
+
+    transition: .2s;
+}
+
+#btnRanking:hover {
+    color: #5f4b00;
+
+    transform: translateY(-1px);
+}
+
+/* =========================================================
    SELEÇÃO DO MODO
-   ===================================================== */
+   ========================================================= */
 
 .selecao-animal {
     text-align: center;
 
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .selecao-animal h2 {
-    color: #1b5e20;
+    font-size: 19px;
 
-    font-size: 24px;
+    color: #37474f;
 
-    margin-bottom: 18px;
+    margin-bottom: 14px;
+
+    font-weight: 700;
 }
 
 .botoes-animal {
@@ -96,57 +267,76 @@ header p {
     grid-template-columns:
         repeat(4, 1fr);
 
-    gap: 12px;
-
-    max-width: 900px;
-
-    margin: 0 auto;
+    gap: 10px;
 }
 
 .botoes-animal button {
     border: none;
 
-    padding: 16px 12px;
+    border-radius: 13px;
 
-    border-radius: 14px;
+    padding: 14px 10px;
 
     color: white;
 
-    font-size: 17px;
+    font-size: 15px;
 
-    font-weight: bold;
+    font-weight: 700;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    min-height: 52px;
+
+    transition:
+        transform .18s,
+        box-shadow .18s,
+        filter .18s;
 }
 
 .botoes-animal button:hover {
     transform: translateY(-2px);
 
-    filter: brightness(1.08);
+    filter: brightness(1.04);
+
+    box-shadow:
+        0 5px 14px rgba(0,0,0,.10);
 }
 
 #btnMacho {
-    background: #5d4037;
+    background: linear-gradient(
+        135deg,
+        #6d4c41,
+        #4e342e
+    );
 }
 
 #btnFemea {
-    background: #ad1457;
+    background: linear-gradient(
+        135deg,
+        #c2185b,
+        #880e4f
+    );
 }
 
 #btnAleatorio {
-    background: #1565c0;
+    background: linear-gradient(
+        135deg,
+        #1976d2,
+        #0d47a1
+    );
 }
 
 #btnDefinicao {
-    background: #ef6c00;
+    background: linear-gradient(
+        135deg,
+        #fb8c00,
+        #ef6c00
+    );
 }
 
-
-/* =====================================================
+/* =========================================================
    PLACAR
-   ===================================================== */
+   ========================================================= */
 
 .placar {
     display: grid;
@@ -156,25 +346,26 @@ header p {
 
     gap: 10px;
 
-    text-align: center;
-
-    margin: 20px auto;
-
-    max-width: 750px;
+    margin: 18px 0 22px;
 }
 
 .placar > div {
-    background: #f1f8e9;
+    background: var(--verde-claro);
 
-    border-radius: 12px;
+    border:
+        1px solid #dbeadb;
 
-    padding: 12px;
+    border-radius: 14px;
 
-    font-size: 18px;
+    padding: 10px 8px;
 
-    font-weight: bold;
+    text-align: center;
 
-    color: #33691e;
+    color: #456148;
+
+    font-size: 14px;
+
+    font-weight: 700;
 }
 
 #pontos,
@@ -183,17 +374,18 @@ header p {
 #nivel {
     display: block;
 
-    font-size: 25px;
+    margin-top: 3px;
 
-    margin-top: 4px;
+    color: var(--verde);
 
-    color: #1b5e20;
+    font-size: 23px;
+
+    font-weight: 800;
 }
 
-
-/* =====================================================
+/* =========================================================
    ÁREA DA IMAGEM
-   ===================================================== */
+   ========================================================= */
 
 .imagem-area {
     display: flex;
@@ -202,7 +394,7 @@ header p {
 
     align-items: center;
 
-    margin: 20px auto 30px;
+    padding: 10px 0 22px;
 }
 
 #animal {
@@ -210,43 +402,54 @@ header p {
 
     width: 100%;
 
-    max-width: 850px;
+    max-width: 760px;
 
     height: auto;
 
-    border-radius: 15px;
+    background: white;
 
-    border: 3px solid #d0d0d0;
+    border:
+        1px solid #d9dfdb;
+
+    border-radius: 18px;
 
     box-shadow:
-        0 4px 15px rgba(0, 0, 0, 0.12);
+        0 6px 22px rgba(31,50,35,.08);
+
+    padding: 8px;
 }
 
-
-/* =====================================================
-   ÁREA DA PERGUNTA
-   ===================================================== */
+/* =========================================================
+   PERGUNTA
+   ========================================================= */
 
 .pergunta-area {
     text-align: center;
 
-    margin-top: 15px;
+    margin-top: 2px;
 }
 
 #pergunta {
-    color: #1b5e20;
+    font-size: 24px;
 
-    font-size: 28px;
+    line-height: 1.45;
 
-    line-height: 1.4;
+    color: #24332a;
 
-    margin-bottom: 25px;
+    margin-bottom: 20px;
+
+    font-weight: 700;
 }
 
+#pergunta strong {
+    color: var(--verde);
 
-/* =====================================================
+    font-weight: 800;
+}
+
+/* =========================================================
    ALTERNATIVAS
-   ===================================================== */
+   ========================================================= */
 
 #alternativas {
     display: grid;
@@ -254,43 +457,51 @@ header p {
     grid-template-columns:
         repeat(2, 1fr);
 
-    gap: 16px;
+    gap: 12px;
 
     width: 100%;
 
-    max-width: 650px;
+    max-width: 600px;
 
     margin: 0 auto;
 }
 
 .alternativa {
-    border: 3px solid #ddd;
+    border:
+        2px solid #dfe5e1;
 
-    background: #f5f5f5;
+    background: #fbfcfb;
 
-    color: #222;
+    color: #263238;
 
-    border-radius: 15px;
+    border-radius: 14px;
 
-    padding: 20px;
+    min-height: 68px;
 
-    min-height: 75px;
+    padding: 16px;
 
-    font-size: 27px;
+    font-size: 24px;
 
-    font-weight: bold;
+    font-weight: 800;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition:
+        transform .16s,
+        background .16s,
+        border .16s,
+        box-shadow .16s;
 }
 
 .alternativa:hover:not(:disabled) {
-    background: #e8f5e9;
+    background: #eef8ef;
 
-    border-color: #43a047;
+    border-color: #66a66a;
 
-    transform: scale(1.02);
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 12px rgba(46,125,50,.10);
 }
 
 .alternativa:disabled {
@@ -300,38 +511,39 @@ header p {
 .alternativa.correta {
     background: #43a047;
 
-    color: white;
-
     border-color: #2e7d32;
+
+    color: white;
 }
 
 .alternativa.errada {
     background: #e53935;
 
-    color: white;
-
     border-color: #c62828;
+
+    color: white;
 }
 
-
-/* =====================================================
+/* =========================================================
    MENSAGEM
-   ===================================================== */
+   ========================================================= */
 
 .mensagem-area {
     text-align: center;
 
-    margin-top: 25px;
+    margin-top: 20px;
 }
 
 #mensagem {
-    min-height: 35px;
+    min-height: 32px;
 
-    font-size: 20px;
+    color: #455a64;
+
+    font-size: 17px;
 
     line-height: 1.5;
 
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 #proxima {
@@ -339,74 +551,176 @@ header p {
 
     border: none;
 
-    background: #1565c0;
+    background:
+        linear-gradient(
+            135deg,
+            #1976d2,
+            #0d47a1
+        );
 
     color: white;
 
-    padding: 16px 28px;
+    padding: 13px 24px;
 
-    border-radius: 14px;
+    border-radius: 11px;
 
-    font-size: 18px;
+    font-size: 16px;
 
-    font-weight: bold;
+    font-weight: 700;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition: .2s;
 }
 
 #proxima:hover {
-    background: #0d47a1;
-
     transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 14px rgba(13,71,161,.20);
 }
 
-
-/* =====================================================
+/* =========================================================
    DEFINIÇÃO
-   ===================================================== */
+   ========================================================= */
 
 .titulo-definicao {
     display: block;
 
-    font-size: 26px;
+    color: var(--verde);
 
-    font-weight: bold;
+    font-size: 23px;
 
-    color: #1b5e20;
+    font-weight: 800;
 
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .texto-definicao {
     display: block;
 
-    max-width: 850px;
+    max-width: 780px;
 
     margin: 0 auto;
 
-    padding: 20px;
+    background: #f5f8f5;
 
-    background: #f5f5f5;
+    border:
+        1px solid #dfe8df;
 
-    border-left: 5px solid #43a047;
+    border-left:
+        5px solid var(--verde-medio);
 
     border-radius: 12px;
 
-    color: #333;
+    padding: 18px;
 
-    font-size: 19px;
+    color: #455a64;
+
+    font-size: 17px;
 
     line-height: 1.6;
 
-    font-weight: normal;
+    text-align: left;
 }
 
+/* =========================================================
+   MODAL DO RANKING
+   ========================================================= */
 
-/* =====================================================
+.modal {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(18, 28, 20, .60);
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 18px;
+
+    z-index: 9999;
+}
+
+.modal.ativo {
+    display: flex;
+}
+
+.modal-conteudo {
+    position: relative;
+
+    width: min(500px, 100%);
+
+    max-height: 80vh;
+
+    overflow-y: auto;
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.25);
+}
+
+.modal-conteudo h2 {
+    text-align: center;
+
+    color: var(--verde);
+
+    margin-bottom: 18px;
+}
+
+.fechar {
+    position: absolute;
+
+    top: 12px;
+
+    right: 12px;
+
+    width: 34px;
+
+    height: 34px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #e53935;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+#listaRanking {
+    padding-left: 28px;
+}
+
+#listaRanking li {
+    margin-bottom: 8px;
+
+    background: #f6f8f6;
+
+    border-radius: 10px;
+
+    padding: 11px 12px;
+
+    font-size: 16px;
+}
+
+/* =========================================================
    TABLET
-   ===================================================== */
+   ========================================================= */
 
 @media (max-width: 850px) {
 
@@ -418,25 +732,19 @@ header p {
         font-size: 30px;
     }
 
-    header p {
-        font-size: 18px;
+    #animal {
+        max-width: 680px;
     }
 
     .botoes-animal {
         grid-template-columns:
             repeat(2, 1fr);
     }
-
-    #pergunta {
-        font-size: 25px;
-    }
-
 }
 
-
-/* =====================================================
+/* =========================================================
    CELULAR
-   ===================================================== */
+   ========================================================= */
 
 @media (max-width: 600px) {
 
@@ -445,136 +753,113 @@ header p {
     }
 
     .container {
-        padding: 15px;
+        padding: 14px;
 
-        border-radius: 16px;
-    }
-
-    header {
-        margin-bottom: 18px;
+        border-radius: 18px;
     }
 
     header h1 {
-        font-size: 25px;
+        font-size: 24px;
     }
 
     header p {
-        font-size: 16px;
+        font-size: 14px;
     }
 
-    .selecao-animal h2 {
-        font-size: 20px;
+    .jogador {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 10px;
+    }
+
+    .jogador label {
+        text-align: center;
+    }
+
+    .jogador-controle {
+        flex-direction: column;
+    }
+
+    #nomeJogador {
+        width: 100%;
+    }
+
+    #btnSalvarNome {
+        width: 100%;
+    }
+
+    .ranking {
+        justify-content: center;
     }
 
     .botoes-animal {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:
+            repeat(2, 1fr);
 
         gap: 8px;
     }
 
     .botoes-animal button {
-        font-size: 14px;
+        font-size: 13px;
 
-        padding: 14px 6px;
+        min-height: 56px;
 
-        min-height: 58px;
+        padding: 10px 6px;
     }
 
     .placar {
-        font-size: 20px;
+        grid-template-columns:
+            repeat(2, 1fr);
 
-        padding: 12px;
-
-        margin: 15px auto;
+        gap: 8px;
     }
 
-    .imagem-area {
-        margin: 15px auto 20px;
+    .placar > div {
+        font-size: 13px;
+
+        padding: 9px;
+    }
+
+    #pontos,
+    #vidas,
+    #combo,
+    #nivel {
+        font-size: 21px;
     }
 
     #animal {
-        border-width: 2px;
+        padding: 5px;
 
-        border-radius: 10px;
+        border-radius: 13px;
     }
 
     #pergunta {
-        font-size: 21px;
-
-        line-height: 1.4;
-
-        margin-bottom: 18px;
-    }
-
-    #alternativas {
-        grid-template-columns: 1fr 1fr;
-
-        gap: 10px;
-    }
-
-    .alternativa {
-        min-height: 65px;
-
-        padding: 14px 8px;
-
-        font-size: 22px;
-
-        border-radius: 12px;
-    }
-
-    #mensagem {
-        font-size: 17px;
-    }
-
-    #proxima {
-        width: 100%;
-
-        padding: 15px;
-
-        font-size: 17px;
-    }
-
-    .titulo-definicao {
         font-size: 20px;
     }
 
-    .texto-definicao {
-        font-size: 16px;
-
-        padding: 15px;
-
-        text-align: left;
+    #alternativas {
+        gap: 8px;
     }
-    .placar {
-    grid-template-columns:
-        repeat(2, 1fr);
 
-    gap: 8px;
+    .alternativa {
+        min-height: 62px;
+
+        font-size: 21px;
+
+        padding: 12px 8px;
+    }
 }
 
-.placar > div {
-    font-size: 15px;
-
-    padding: 10px;
-}
-
-#pontos,
-#vidas,
-#combo,
-#nivel {
-    font-size: 21px;
- }   
-}
-
-
-/* =====================================================
-   CELULARES MUITO PEQUENOS
-   ===================================================== */
+/* =========================================================
+   CELULAR PEQUENO
+   ========================================================= */
 
 @media (max-width: 380px) {
 
     header h1 {
-        font-size: 22px;
+        font-size: 21px;
     }
 
     .botoes-animal button {
@@ -582,12 +867,10 @@ header p {
     }
 
     #pergunta {
-        font-size: 19px;
+        font-size: 18px;
     }
 
     .alternativa {
-        font-size: 20px;
-
-        min-height: 60px;
+        font-size: 19px;
     }
 }

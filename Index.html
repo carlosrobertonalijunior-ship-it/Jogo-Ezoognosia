@@ -18,7 +18,36 @@
             <h1>🐄 Ezoognósia dos Bovinos</h1>
             <p>Quiz de Descrição Zootécnica</p>
         </header>
+<section class="jogador">
 
+    <label for="nomeJogador">
+        👤 Nome do jogador
+    </label>
+
+    <div class="jogador-controle">
+
+        <input
+            type="text"
+            id="nomeJogador"
+            placeholder="Digite seu nome"
+            maxlength="20"
+        >
+
+        <button id="btnSalvarNome">
+            Jogar
+        </button>
+
+    </div>
+
+</section>
+
+<section class="ranking">
+
+    <button id="btnRanking">
+        🏆 Ver Ranking
+    </button>
+
+</section>
         <!-- ESCOLHA DO ANIMAL -->
         <section class="selecao-animal">
 
@@ -101,7 +130,21 @@
             </button>
 
         </section>
+<div id="rankingModal" class="modal">
 
+    <div class="modal-conteudo">
+
+        <button id="fecharRanking" class="fechar">
+            ✕
+        </button>
+
+        <h2>🏆 Ranking</h2>
+
+        <ol id="listaRanking"></ol>
+
+    </div>
+
+</div>
     </main>
 
     <script src="perguntas.js"></script>

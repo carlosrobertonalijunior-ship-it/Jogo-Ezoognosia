@@ -1,5 +1,6 @@
+let nomeJogador = "";
 let pontos = 0;
-let vidas = 3;
+let vidas = 1;
 let combo = 0;
 let nivel = 1;
 
@@ -47,8 +48,137 @@ const btnAleatorio =
 
 const btnDefinicao =
     document.getElementById("btnDefinicao");
+const campoNome =
+    document.getElementById("nomeJogador");
 
+const btnSalvarNome =
+    document.getElementById("btnSalvarNome");
 
+const btnRanking =
+    document.getElementById("btnRanking");
+
+const rankingModal =
+    document.getElementById("rankingModal");
+
+const fecharRanking =
+    document.getElementById("fecharRanking");
+
+const listaRanking =
+    document.getElementById("listaRanking");
+
+    function salvarNome() {
+
+    const nome =
+        campoNome.value.trim();
+
+    if (!nome) {
+
+        alert("Digite seu nome para começar.");
+
+        return;
+    }
+
+    nomeJogador = nome;
+
+    localStorage.setItem(
+        "nomeJogador",
+        nomeJogador
+    );
+
+    alert(
+        `Boa sorte, ${nomeJogador}!`
+    );
+}
+function carregarNome() {
+
+    const nomeSalvo =
+        localStorage.getItem("nomeJogador");
+
+    if (nomeSalvo) {
+
+        nomeJogador = nomeSalvo;
+
+        campoNome.value =
+            nomeSalvo;
+    }
+}
+function salvarPontuacao() {
+
+    if (!nomeJogador) {
+        return;
+    }
+
+    const rankingSalvo =
+        JSON.parse(
+            localStorage.getItem(
+                "rankingEzoognosia"
+            )
+        ) || [];
+
+    rankingSalvo.push({
+
+        nome: nomeJogador,
+
+        pontos: pontos,
+
+        data: new Date().toISOString()
+
+    });
+
+    rankingSalvo.sort(
+        (a, b) =>
+            b.pontos - a.pontos
+    );
+
+    const top10 =
+        rankingSalvo.slice(0, 10);
+
+    localStorage.setItem(
+        "rankingEzoognosia",
+        JSON.stringify(top10)
+    );
+}
+function mostrarRanking() {
+
+    const rankingSalvo =
+        JSON.parse(
+            localStorage.getItem(
+                "rankingEzoognosia"
+            )
+        ) || [];
+
+    listaRanking.innerHTML = "";
+
+    if (rankingSalvo.length === 0) {
+
+        listaRanking.innerHTML =
+            "<li>Ainda não existem pontuações.</li>";
+
+    } else {
+
+        rankingSalvo.forEach(
+            (jogador, index) => {
+
+                const item =
+                    document.createElement("li");
+
+                item.innerHTML =
+                    `<strong>${index + 1}º</strong> 
+                    ${jogador.nome}
+                    — ⭐ ${jogador.pontos}`;
+
+                listaRanking.appendChild(
+                    item
+                );
+            }
+        );
+    }
+
+    rankingModal.classList.add(
+        "ativo"
+    );
+}
+carregarNome();
 /* =====================================================
    INICIAR JOGO
    ===================================================== */
@@ -56,7 +186,7 @@ const btnDefinicao =
 function iniciarJogo(modo) {
 
     pontos = 0;
-    vidas = 3;
+    vidas = 1;
     combo = 0;
     nivel = 1;
 
@@ -251,31 +381,50 @@ function sortearPerguntaDefinicao() {
    ALTERNATIVAS — NÚMEROS
    ===================================================== */
 
-function criarAlternativasNumero(
-    numeroCorreto
-) {
+function criarAlternativasNumero(numeroCorreto) {
 
-    const numeros =
-        new Set();
+    const numeros = new Set();
 
-    numeros.add(
-        numeroCorreto
+    numeros.add(numeroCorreto);
+
+    // Primeiro tenta números próximos
+    const candidatosProximos = [
+        numeroCorreto - 1,
+        numeroCorreto + 1,
+        numeroCorreto - 2,
+        numeroCorreto + 2,
+        numeroCorreto - 3,
+        numeroCorreto + 3
+    ];
+
+    // Remove números inválidos
+    const validos = candidatosProximos.filter(
+        numero => numero >= 1 && numero <= 36
     );
 
-    while (
-        numeros.size < 4
-    ) {
+    // Embaralha os próximos
+    validos.sort(() => Math.random() - 0.5);
 
-        const numero =
-            Math.floor(
-                Math.random() * 36
-            ) + 1;
+    // Adiciona os mais próximos primeiro
+    for (const numero of validos) {
+
+        if (numeros.size >= 4) {
+            break;
+        }
 
         numeros.add(numero);
     }
 
-    const lista =
-        [...numeros];
+    // Segurança: caso ainda não tenha 4
+    while (numeros.size < 4) {
+
+        const aleatorio =
+            Math.floor(Math.random() * 36) + 1;
+
+        numeros.add(aleatorio);
+    }
+
+    const lista = [...numeros];
 
     lista.sort(
         () => Math.random() - 0.5
@@ -511,6 +660,7 @@ function verificarNumero(
         if (vidas <= 0) {
 
             finalizarJogo();
+            
 
             return;
         }
@@ -678,7 +828,7 @@ function destacarRespostaTermo() {
    ===================================================== */
 
 function finalizarJogo() {
-
+    salvarPontuacao();
     alternativasHTML.innerHTML = "";
 
     perguntaHTML.innerHTML =
@@ -764,4 +914,24 @@ btnAleatorio.addEventListener(
 btnDefinicao.addEventListener(
     "click",
     () => iniciarJogo("definicao")
+);
+btnSalvarNome.addEventListener(
+    "click",
+    salvarNome
+);
+
+btnRanking.addEventListener(
+    "click",
+    mostrarRanking
+);
+
+fecharRanking.addEventListener(
+    "click",
+    () => {
+
+        rankingModal.classList.remove(
+            "ativo"
+        );
+
+    }
 );
