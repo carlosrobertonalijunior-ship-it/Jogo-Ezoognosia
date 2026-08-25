@@ -1,14 +1,83 @@
+/* =========================================================
+   CONEXÃO COM SUPABASE
+   ========================================================= */
+
+const SUPABASE_URL =
+    "https://qsccgzlwtanwxunclhqd.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_XIZtmNAPdKhgpeSev_FxhA_x2xax96t";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =========================================================
+   TESTE DA CONEXÃO
+   ========================================================= */
+
+async function testarSupabase() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("ranking_ezoognosia")
+            .select("*")
+            .limit(1);
+
+    if (error) {
+
+        console.error(
+            "Erro Supabase:",
+            error
+        );
+
+        return;
+    }
+
+    console.log(
+        "Supabase conectado!",
+        data
+    );
+}
+
+testarSupabase();
+
+
+/* =========================================================
+   VARIÁVEIS DO JOGO
+   ========================================================= */
+
 let nomeJogador = "";
+
 let pontos = 0;
-let vidas = 1;
+
+let vidas = 2;
+
 let combo = 0;
+
+let maiorCombo = 0;
+
 let nivel = 1;
+
+let acertos = 0;
+
+let erros = 0;
 
 let modoAtual = null;
 
 let perguntasDisponiveis = [];
 
 let perguntaAtual = null;
+
+let partidaFinalizada = false;
+
+
+/* =========================================================
+   ELEMENTOS HTML
+   ========================================================= */
 
 const perguntaHTML =
     document.getElementById("pergunta");
@@ -37,6 +106,7 @@ const botaoProxima =
 const imagemAnimal =
     document.getElementById("animal");
 
+
 const btnMacho =
     document.getElementById("btnMacho");
 
@@ -48,6 +118,8 @@ const btnAleatorio =
 
 const btnDefinicao =
     document.getElementById("btnDefinicao");
+
+
 const campoNome =
     document.getElementById("nomeJogador");
 
@@ -66,14 +138,23 @@ const fecharRanking =
 const listaRanking =
     document.getElementById("listaRanking");
 
-    function salvarNome() {
+
+/* =========================================================
+   NOME DO JOGADOR
+   ========================================================= */
+
+function salvarNome() {
 
     const nome =
         campoNome.value.trim();
 
     if (!nome) {
 
-        alert("Digite seu nome para começar.");
+        alert(
+            "Digite seu nome para começar."
+        );
+
+        campoNome.focus();
 
         return;
     }
@@ -85,194 +166,423 @@ const listaRanking =
         nomeJogador
     );
 
-    alert(
-        `Boa sorte, ${nomeJogador}!`
-    );
+    mensagemHTML.innerHTML =
+        `👋 Boa sorte, <strong>${nomeJogador}</strong>!`;
 }
+
+
 function carregarNome() {
 
     const nomeSalvo =
-        localStorage.getItem("nomeJogador");
+        localStorage.getItem(
+            "nomeJogador"
+        );
 
     if (nomeSalvo) {
 
-        nomeJogador = nomeSalvo;
+        nomeJogador =
+            nomeSalvo;
 
         campoNome.value =
             nomeSalvo;
     }
 }
-function salvarPontuacao() {
 
-    if (!nomeJogador) {
+carregarNome();
+
+
+/* =========================================================
+   NOME DO MODO PARA O RANKING
+   ========================================================= */
+
+function nomeModo(modo) {
+
+    switch (modo) {
+
+        case "macho":
+            return "Macho";
+
+        case "femea":
+            return "Fêmea";
+
+        case "aleatorio":
+            return "Aleatório";
+
+        case "definicao":
+            return "Definições";
+
+        default:
+            return "Geral";
+    }
+}
+
+
+/* =========================================================
+   SALVAR PONTUAÇÃO NO SUPABASE
+   ========================================================= */
+
+async function salvarPontuacao() {
+
+    if (partidaFinalizada) {
         return;
     }
 
-    const rankingSalvo =
-        JSON.parse(
-            localStorage.getItem(
-                "rankingEzoognosia"
-            )
-        ) || [];
+    partidaFinalizada = true;
 
-    rankingSalvo.push({
 
-        nome: nomeJogador,
+    if (!nomeJogador) {
 
-        pontos: pontos,
+        console.warn(
+            "Pontuação não enviada: jogador sem nome."
+        );
 
-        data: new Date().toISOString()
+        return;
+    }
 
-    });
 
-    rankingSalvo.sort(
-        (a, b) =>
-            b.pontos - a.pontos
+    const registro = {
+
+        nome:
+            nomeJogador.substring(
+                0,
+                20
+            ),
+
+        pontos:
+            Math.max(
+                0,
+                Math.floor(pontos)
+            ),
+
+        modo:
+            nomeModo(modoAtual),
+
+        acertos:
+            acertos,
+
+        erros:
+            erros,
+
+        combo_max:
+            maiorCombo,
+
+        nivel:
+            nivel
+    };
+
+
+    console.log(
+        "Enviando pontuação:",
+        registro
     );
 
-    const top10 =
-        rankingSalvo.slice(0, 10);
 
-    localStorage.setItem(
-        "rankingEzoognosia",
-        JSON.stringify(top10)
+    const { data, error } =
+        await supabaseClient
+            .from("ranking_ezoognosia")
+            .insert([registro])
+            .select();
+
+
+    if (error) {
+
+        console.error(
+            "Erro ao salvar pontuação:",
+            error
+        );
+
+        mensagemHTML.innerHTML +=
+            `<br><small>⚠️ Não foi possível registrar a pontuação no ranking.</small>`;
+
+        return;
+    }
+
+
+    console.log(
+        "Pontuação salva no ranking global:",
+        data
     );
 }
-function mostrarRanking() {
 
-    const rankingSalvo =
-        JSON.parse(
-            localStorage.getItem(
-                "rankingEzoognosia"
-            )
-        ) || [];
 
-    listaRanking.innerHTML = "";
+/* =========================================================
+   BUSCAR RANKING GLOBAL
+   ========================================================= */
 
-    if (rankingSalvo.length === 0) {
-
-        listaRanking.innerHTML =
-            "<li>Ainda não existem pontuações.</li>";
-
-    } else {
-
-        rankingSalvo.forEach(
-            (jogador, index) => {
-
-                const item =
-                    document.createElement("li");
-
-                item.innerHTML =
-                    `<strong>${index + 1}º</strong> 
-                    ${jogador.nome}
-                    — ⭐ ${jogador.pontos}`;
-
-                listaRanking.appendChild(
-                    item
-                );
-            }
-        );
-    }
+async function mostrarRanking() {
 
     rankingModal.classList.add(
         "ativo"
     );
+
+
+    listaRanking.innerHTML =
+        "<li>⏳ Carregando ranking...</li>";
+
+
+    const { data, error } =
+        await supabaseClient
+            .from("ranking_ezoognosia")
+            .select(
+                "nome,pontos,modo,acertos,erros,combo_max,nivel,criado_em"
+            )
+            .order(
+                "pontos",
+                {
+                    ascending: false
+                }
+            )
+            .order(
+                "acertos",
+                {
+                    ascending: false
+                }
+            )
+            .limit(10);
+
+
+    if (error) {
+
+        console.error(
+            "Erro ao carregar ranking:",
+            error
+        );
+
+        listaRanking.innerHTML =
+            "<li>❌ Não foi possível carregar o ranking.</li>";
+
+        return;
+    }
+
+
+    listaRanking.innerHTML = "";
+
+
+    if (
+        !data ||
+        data.length === 0
+    ) {
+
+        listaRanking.innerHTML =
+            "<li>Ainda não há pontuações.</li>";
+
+        return;
+    }
+
+
+    data.forEach(
+        (jogador, index) => {
+
+            const item =
+                document.createElement(
+                    "li"
+                );
+
+
+            let medalha = "";
+
+
+            if (index === 0) {
+                medalha = "🥇";
+            }
+
+            else if (index === 1) {
+                medalha = "🥈";
+            }
+
+            else if (index === 2) {
+                medalha = "🥉";
+            }
+
+            else {
+                medalha =
+                    `${index + 1}º`;
+            }
+
+
+            item.innerHTML = `
+                <strong>
+                    ${medalha}
+                </strong>
+                ${jogador.nome}
+
+                — ⭐ ${jogador.pontos}
+
+                <small>
+                    | ${jogador.modo}
+                    | 🔥 ${jogador.combo_max}
+                </small>
+            `;
+
+
+            listaRanking.appendChild(
+                item
+            );
+        }
+    );
 }
-carregarNome();
-/* =====================================================
+
+
+/* =========================================================
    INICIAR JOGO
-   ===================================================== */
+   ========================================================= */
 
 function iniciarJogo(modo) {
 
+    if (!nomeJogador) {
+
+        alert(
+            "Digite seu nome antes de começar."
+        );
+
+        campoNome.focus();
+
+        return;
+    }
+
+
     pontos = 0;
-    vidas = 1;
+
+    vidas = 2;
+
     combo = 0;
+
+    maiorCombo = 0;
+
     nivel = 1;
 
-    pontosHTML.textContent = pontos;
-    vidasHTML.textContent = vidas;
-    comboHTML.textContent = combo;
-    nivelHTML.textContent = nivel;
+    acertos = 0;
 
-    modoAtual = modo;
+    erros = 0;
 
-    mensagemHTML.innerHTML = "";
+    partidaFinalizada = false;
 
-    alternativasHTML.innerHTML = "";
 
-    if (modo === "macho") {
+    pontosHTML.textContent =
+        pontos;
+
+    vidasHTML.textContent =
+        vidas;
+
+    comboHTML.textContent =
+        combo;
+
+    nivelHTML.textContent =
+        nivel;
+
+
+    modoAtual =
+        modo;
+
+
+    mensagemHTML.innerHTML =
+        "";
+
+
+    alternativasHTML.innerHTML =
+        "";
+
+
+    if (
+        modo === "macho"
+    ) {
 
         perguntasDisponiveis =
             perguntas.filter(
-                p => p.animal === "macho"
+                p =>
+                    p.animal ===
+                    "macho"
             );
+
 
         imagemAnimal.src =
             "imagens/boi_numerado.png";
 
+
         imagemAnimal.alt =
             "Boi com regiões zootécnicas numeradas";
 
-        sortearPergunta();
 
+        sortearPergunta();
     }
 
-    else if (modo === "femea") {
+
+    else if (
+        modo === "femea"
+    ) {
 
         perguntasDisponiveis =
             perguntas.filter(
-                p => p.animal === "femea"
+                p =>
+                    p.animal ===
+                    "femea"
             );
+
 
         imagemAnimal.src =
             "imagens/vaca_numerada.png";
 
+
         imagemAnimal.alt =
             "Vaca com regiões zootécnicas numeradas";
 
-        sortearPergunta();
 
+        sortearPergunta();
     }
 
-    else if (modo === "aleatorio") {
+
+    else if (
+        modo === "aleatorio"
+    ) {
 
         perguntasDisponiveis =
             [...perguntas];
 
-        sortearPergunta();
 
+        sortearPergunta();
     }
 
-    else if (modo === "definicao") {
+
+    else if (
+        modo === "definicao"
+    ) {
 
         perguntasDisponiveis =
             [...perguntas];
+
 
         sortearPerguntaDefinicao();
-
     }
 }
 
 
-/* =====================================================
-   IMAGEM DO ANIMAL
-   ===================================================== */
+/* =========================================================
+   ESCOLHER IMAGEM
+   ========================================================= */
 
-function escolherImagem(pergunta) {
+function escolherImagem(
+    pergunta
+) {
 
-    if (pergunta.animal === "macho") {
+    if (
+        pergunta.animal ===
+        "macho"
+    ) {
 
         imagemAnimal.src =
             "imagens/boi_numerado.png";
 
+
         imagemAnimal.alt =
             "Boi com regiões zootécnicas numeradas";
 
-    } else {
+    }
+
+    else {
 
         imagemAnimal.src =
             "imagens/vaca_numerada.png";
+
 
         imagemAnimal.alt =
             "Vaca com regiões zootécnicas numeradas";
@@ -280,20 +590,29 @@ function escolherImagem(pergunta) {
 }
 
 
-/* =====================================================
-   NÍVEL
-   ===================================================== */
+/* =========================================================
+   ATUALIZAR NÍVEL
+   ========================================================= */
 
 function atualizarNivel() {
 
     const novoNivel =
-        Math.floor(pontos / 100) + 1;
+        Math.floor(
+            pontos / 100
+        ) + 1;
 
-    if (novoNivel !== nivel) {
 
-        nivel = novoNivel;
+    if (
+        novoNivel !== nivel
+    ) {
 
-        nivelHTML.textContent = nivel;
+        nivel =
+            novoNivel;
+
+
+        nivelHTML.textContent =
+            nivel;
+
 
         mensagemHTML.innerHTML =
             `🎉 Você chegou ao <strong>Nível ${nivel}</strong>!`;
@@ -301,25 +620,31 @@ function atualizarNivel() {
 }
 
 
-/* =====================================================
+/* =========================================================
    SORTEAR PERGUNTA
-   ===================================================== */
+   ========================================================= */
 
 function sortearPergunta() {
 
-    if (vidas <= 0) {
+    if (
+        vidas <= 0
+    ) {
 
         finalizarJogo();
 
         return;
     }
 
-    if (perguntasDisponiveis.length === 0) {
+
+    if (
+        perguntasDisponiveis.length === 0
+    ) {
 
         finalizarJogo();
 
         return;
     }
+
 
     const indice =
         Math.floor(
@@ -327,35 +652,53 @@ function sortearPergunta() {
             perguntasDisponiveis.length
         );
 
+
     perguntaAtual =
-        perguntasDisponiveis[indice];
+        perguntasDisponiveis[
+            indice
+        ];
+
 
     perguntasDisponiveis.splice(
         indice,
         1
     );
 
-    escolherImagem(perguntaAtual);
+
+    escolherImagem(
+        perguntaAtual
+    );
+
 
     mostrarPerguntaNumero();
 }
 
 
+/* =========================================================
+   SORTEAR PERGUNTA DE DEFINIÇÃO
+   ========================================================= */
+
 function sortearPerguntaDefinicao() {
 
-    if (vidas <= 0) {
+    if (
+        vidas <= 0
+    ) {
 
         finalizarJogo();
 
         return;
     }
 
-    if (perguntasDisponiveis.length === 0) {
+
+    if (
+        perguntasDisponiveis.length === 0
+    ) {
 
         finalizarJogo();
 
         return;
     }
+
 
     const indice =
         Math.floor(
@@ -363,80 +706,127 @@ function sortearPerguntaDefinicao() {
             perguntasDisponiveis.length
         );
 
+
     perguntaAtual =
-        perguntasDisponiveis[indice];
+        perguntasDisponiveis[
+            indice
+        ];
+
 
     perguntasDisponiveis.splice(
         indice,
         1
     );
 
-    escolherImagem(perguntaAtual);
+
+    escolherImagem(
+        perguntaAtual
+    );
+
 
     mostrarPerguntaDefinicao();
 }
 
 
-/* =====================================================
-   ALTERNATIVAS — NÚMEROS
-   ===================================================== */
+/* =========================================================
+   ALTERNATIVAS NUMÉRICAS
+   NÚMEROS PRÓXIMOS
+   ========================================================= */
 
-function criarAlternativasNumero(numeroCorreto) {
+function criarAlternativasNumero(
+    numeroCorreto
+) {
 
-    const numeros = new Set();
+    const numeros =
+        new Set();
 
-    numeros.add(numeroCorreto);
 
-    // Primeiro tenta números próximos
+    numeros.add(
+        numeroCorreto
+    );
+
+
     const candidatosProximos = [
+
         numeroCorreto - 1,
+
         numeroCorreto + 1,
+
         numeroCorreto - 2,
+
         numeroCorreto + 2,
+
         numeroCorreto - 3,
+
         numeroCorreto + 3
     ];
 
-    // Remove números inválidos
-    const validos = candidatosProximos.filter(
-        numero => numero >= 1 && numero <= 36
+
+    const validos =
+        candidatosProximos.filter(
+            numero =>
+                numero >= 1 &&
+                numero <= 36
+        );
+
+
+    validos.sort(
+        () =>
+            Math.random() - 0.5
     );
 
-    // Embaralha os próximos
-    validos.sort(() => Math.random() - 0.5);
 
-    // Adiciona os mais próximos primeiro
-    for (const numero of validos) {
+    for (
+        const numero
+        of validos
+    ) {
 
-        if (numeros.size >= 4) {
+        if (
+            numeros.size >= 4
+        ) {
             break;
         }
 
-        numeros.add(numero);
+
+        numeros.add(
+            numero
+        );
     }
 
-    // Segurança: caso ainda não tenha 4
-    while (numeros.size < 4) {
+
+    while (
+        numeros.size < 4
+    ) {
 
         const aleatorio =
-            Math.floor(Math.random() * 36) + 1;
+            Math.floor(
+                Math.random() * 36
+            ) + 1;
 
-        numeros.add(aleatorio);
+
+        numeros.add(
+            aleatorio
+        );
     }
 
-    const lista = [...numeros];
+
+    const lista =
+        [...numeros];
+
 
     lista.sort(
-        () => Math.random() - 0.5
+        () =>
+            Math.random() - 0.5
     );
+
 
     return lista;
 }
 
 
-/* =====================================================
-   ALTERNATIVAS — TERMOS
-   ===================================================== */
+/* =========================================================
+   ALTERNATIVAS DE TERMOS
+   ========================================================= */
 
 function criarAlternativasTermo(
     termoCorreto
@@ -445,9 +835,11 @@ function criarAlternativasTermo(
     const termos =
         new Set();
 
+
     termos.add(
         termoCorreto
     );
+
 
     while (
         termos.size < 4
@@ -459,42 +851,57 @@ function criarAlternativasTermo(
                 perguntas.length
             );
 
+
         termos.add(
             perguntas[indice].termo
         );
     }
 
+
     const lista =
         [...termos];
 
+
     lista.sort(
-        () => Math.random() - 0.5
+        () =>
+            Math.random() - 0.5
     );
+
 
     return lista;
 }
 
 
-/* =====================================================
-   MOSTRAR PERGUNTA — NÚMERO
-   ===================================================== */
+/* =========================================================
+   MOSTRAR PERGUNTA NUMÉRICA
+   ========================================================= */
 
 function mostrarPerguntaNumero() {
 
-    mensagemHTML.innerHTML = "";
+    mensagemHTML.innerHTML =
+        "";
+
 
     botaoProxima.style.display =
         "none";
 
-    perguntaHTML.innerHTML =
-        `Qual é o número correspondente à <strong>${perguntaAtual.termo}</strong>?`;
 
-    alternativasHTML.innerHTML = "";
+    perguntaHTML.innerHTML =
+        `
+        Qual é o número correspondente à
+        <strong>${perguntaAtual.termo}</strong>?
+        `;
+
+
+    alternativasHTML.innerHTML =
+        "";
+
 
     const alternativas =
         criarAlternativasNumero(
             perguntaAtual.numero
         );
+
 
     alternativas.forEach(
         numero => {
@@ -504,11 +911,14 @@ function mostrarPerguntaNumero() {
                     "button"
                 );
 
+
             botao.className =
                 "alternativa";
 
+
             botao.textContent =
                 numero;
+
 
             botao.addEventListener(
                 "click",
@@ -519,6 +929,7 @@ function mostrarPerguntaNumero() {
                     )
             );
 
+
             alternativasHTML.appendChild(
                 botao
             );
@@ -527,16 +938,19 @@ function mostrarPerguntaNumero() {
 }
 
 
-/* =====================================================
-   MOSTRAR PERGUNTA — DEFINIÇÃO
-   ===================================================== */
+/* =========================================================
+   MOSTRAR PERGUNTA DE DEFINIÇÃO
+   ========================================================= */
 
 function mostrarPerguntaDefinicao() {
 
-    mensagemHTML.innerHTML = "";
+    mensagemHTML.innerHTML =
+        "";
+
 
     botaoProxima.style.display =
         "none";
+
 
     perguntaHTML.innerHTML =
         `
@@ -551,12 +965,16 @@ function mostrarPerguntaDefinicao() {
         </span>
         `;
 
-    alternativasHTML.innerHTML = "";
+
+    alternativasHTML.innerHTML =
+        "";
+
 
     const alternativas =
         criarAlternativasTermo(
             perguntaAtual.termo
         );
+
 
     alternativas.forEach(
         termo => {
@@ -566,11 +984,14 @@ function mostrarPerguntaDefinicao() {
                     "button"
                 );
 
+
             botao.className =
                 "alternativa";
 
+
             botao.textContent =
                 termo;
+
 
             botao.addEventListener(
                 "click",
@@ -581,6 +1002,7 @@ function mostrarPerguntaDefinicao() {
                     )
             );
 
+
             alternativasHTML.appendChild(
                 botao
             );
@@ -589,9 +1011,9 @@ function mostrarPerguntaDefinicao() {
 }
 
 
-/* =====================================================
+/* =========================================================
    VERIFICAR NÚMERO
-   ===================================================== */
+   ========================================================= */
 
 function verificarNumero(
     numeroEscolhido,
@@ -599,6 +1021,7 @@ function verificarNumero(
 ) {
 
     bloquearAlternativas();
+
 
     if (
         numeroEscolhido ===
@@ -609,71 +1032,117 @@ function verificarNumero(
             "correta"
         );
 
+
+        acertos++;
+
         combo++;
 
-        let ganho = 10;
 
-        if (combo >= 5) {
+        if (
+            combo >
+            maiorCombo
+        ) {
+
+            maiorCombo =
+                combo;
+        }
+
+
+        let ganho =
+            10;
+
+
+        if (
+            combo >= 5
+        ) {
 
             ganho += 20;
 
-        } else if (combo >= 3) {
-
-            ganho += 10;
-
         }
 
-        pontos += ganho;
+        else if (
+            combo >= 3
+        ) {
+
+            ganho += 10;
+        }
+
+
+        pontos +=
+            ganho;
+
 
         pontosHTML.textContent =
             pontos;
 
+
         comboHTML.textContent =
             combo;
 
+
         atualizarNivel();
 
-        mensagemHTML.innerHTML =
-            `✅ Correto! +${ganho} pontos`;
 
-    } else {
+        mensagemHTML.innerHTML =
+            `
+            ✅ Correto!
+            <strong>+${ganho} pontos</strong>
+            `;
+    }
+
+
+    else {
 
         botao.classList.add(
             "errada"
         );
 
+
+        erros++;
+
+
         combo = 0;
 
         vidas--;
 
+
         comboHTML.textContent =
             combo;
+
 
         vidasHTML.textContent =
             vidas;
 
+
         destacarRespostaNumero();
 
-        mensagemHTML.innerHTML =
-            `❌ Incorreto! Você perdeu 1 vida.`;
 
-        if (vidas <= 0) {
+        mensagemHTML.innerHTML =
+            `
+            ❌ Incorreto!
+            Você perdeu 1 vida.
+            `;
+        
+
+        if (
+            vidas <= 0
+        ) {
 
             finalizarJogo();
-            
 
             return;
         }
     }
+
 
     botaoProxima.style.display =
         "block";
 }
 
 
-/* =====================================================
+/* =========================================================
    VERIFICAR DEFINIÇÃO
-   ===================================================== */
+   ========================================================= */
 
 function verificarDefinicao(
     termoEscolhido,
@@ -681,6 +1150,7 @@ function verificarDefinicao(
 ) {
 
     bloquearAlternativas();
+
 
     if (
         termoEscolhido ===
@@ -691,55 +1161,102 @@ function verificarDefinicao(
             "correta"
         );
 
+
+        acertos++;
+
+
         combo++;
 
-        let ganho = 10;
 
-        if (combo >= 5) {
+        if (
+            combo >
+            maiorCombo
+        ) {
+
+            maiorCombo =
+                combo;
+        }
+
+
+        let ganho =
+            10;
+
+
+        if (
+            combo >= 5
+        ) {
 
             ganho += 20;
 
-        } else if (combo >= 3) {
-
-            ganho += 10;
-
         }
 
-        pontos += ganho;
+        else if (
+            combo >= 3
+        ) {
+
+            ganho += 10;
+        }
+
+
+        pontos +=
+            ganho;
+
 
         pontosHTML.textContent =
             pontos;
 
+
         comboHTML.textContent =
             combo;
 
+
         atualizarNivel();
 
-        mensagemHTML.innerHTML =
-            `✅ Correto! +${ganho} pontos`;
 
-    } else {
+        mensagemHTML.innerHTML =
+            `
+            ✅ Correto!
+            <strong>+${ganho} pontos</strong>
+            `;
+    }
+
+
+    else {
 
         botao.classList.add(
             "errada"
         );
 
+
+        erros++;
+
+
         combo = 0;
 
         vidas--;
 
+
         comboHTML.textContent =
             combo;
+
 
         vidasHTML.textContent =
             vidas;
 
+
         destacarRespostaTermo();
 
-        mensagemHTML.innerHTML =
-            `❌ Incorreto! Você perdeu 1 vida.`;
 
-        if (vidas <= 0) {
+        mensagemHTML.innerHTML =
+            `
+            ❌ Incorreto!
+            Você perdeu 1 vida.
+            `;
+
+
+        if (
+            vidas <= 0
+        ) {
 
             finalizarJogo();
 
@@ -747,14 +1264,15 @@ function verificarDefinicao(
         }
     }
 
+
     botaoProxima.style.display =
         "block";
 }
 
 
-/* =====================================================
+/* =========================================================
    BLOQUEAR ALTERNATIVAS
-   ===================================================== */
+   ========================================================= */
 
 function bloquearAlternativas() {
 
@@ -763,17 +1281,20 @@ function bloquearAlternativas() {
             ".alternativa"
         );
 
+
     botoes.forEach(
         botao => {
-            botao.disabled = true;
+
+            botao.disabled =
+                true;
         }
     );
 }
 
 
-/* =====================================================
-   DESTACAR RESPOSTA
-   ===================================================== */
+/* =========================================================
+   DESTACAR RESPOSTA NUMÉRICA
+   ========================================================= */
 
 function destacarRespostaNumero() {
 
@@ -782,11 +1303,14 @@ function destacarRespostaNumero() {
             ".alternativa"
         );
 
+
     botoes.forEach(
         botao => {
 
             if (
-                Number(botao.textContent) ===
+                Number(
+                    botao.textContent
+                ) ===
                 perguntaAtual.numero
             ) {
 
@@ -799,12 +1323,17 @@ function destacarRespostaNumero() {
 }
 
 
+/* =========================================================
+   DESTACAR RESPOSTA DE TERMO
+   ========================================================= */
+
 function destacarRespostaTermo() {
 
     const botoes =
         document.querySelectorAll(
             ".alternativa"
         );
+
 
     botoes.forEach(
         botao => {
@@ -823,55 +1352,70 @@ function destacarRespostaTermo() {
 }
 
 
-/* =====================================================
-   FINALIZAR
-   ===================================================== */
+/* =========================================================
+   FINALIZAR JOGO
+   ========================================================= */
 
-function finalizarJogo() {
-    salvarPontuacao();
-    alternativasHTML.innerHTML = "";
+async function finalizarJogo() {
+
+    if (
+        partidaFinalizada
+    ) {
+        return;
+    }
+
+
+    await salvarPontuacao();
+
+
+    alternativasHTML.innerHTML =
+        "";
+
 
     perguntaHTML.innerHTML =
         "🏁 Fim de jogo!";
 
-    if (vidas <= 0) {
 
-        mensagemHTML.innerHTML =
-            `
-            ❤️ Você ficou sem vidas.
+    mensagemHTML.innerHTML =
+        `
+        ❤️ Vidas restantes:
+        <strong>${vidas}</strong>
 
-            <br><br>
+        <br>
 
-            ⭐ Pontuação:
-            <strong>${pontos}</strong>
+        ⭐ Pontuação:
+        <strong>${pontos}</strong>
 
-            <br>
+        <br>
 
-            🔥 Maior sequência:
-            <strong>${combo}</strong>
-            `;
+        ✅ Acertos:
+        <strong>${acertos}</strong>
 
-    } else {
+        <br>
 
-        mensagemHTML.innerHTML =
-            `
-            🎉 Você terminou todas as perguntas!
+        ❌ Erros:
+        <strong>${erros}</strong>
 
-            <br><br>
+        <br>
 
-            ⭐ Pontuação final:
-            <strong>${pontos}</strong>
-            `;
-    }
+        🔥 Maior combo:
+        <strong>${maiorCombo}</strong>
+
+        <br><br>
+
+        🏆 Sua pontuação foi enviada
+        para o ranking global!
+        `;
+
 
     botaoProxima.style.display =
         "none";
 }
 
 
-/* =====================================================
+/* =========================================================
    BOTÃO PRÓXIMA
-   ===================================================== */
+   ========================================================= */
 
 botaoProxima.addEventListener(
     "click",
@@ -884,7 +1428,9 @@ botaoProxima.addEventListener(
 
             sortearPerguntaDefinicao();
 
-        } else {
+        }
+
+        else {
 
             sortearPergunta();
         }
@@ -892,38 +1438,61 @@ botaoProxima.addEventListener(
 );
 
 
-/* =====================================================
+/* =========================================================
    BOTÕES DE MODO
-   ===================================================== */
+   ========================================================= */
 
 btnMacho.addEventListener(
     "click",
-    () => iniciarJogo("macho")
+    () =>
+        iniciarJogo("macho")
 );
+
 
 btnFemea.addEventListener(
     "click",
-    () => iniciarJogo("femea")
+    () =>
+        iniciarJogo("femea")
 );
+
 
 btnAleatorio.addEventListener(
     "click",
-    () => iniciarJogo("aleatorio")
+    () =>
+        iniciarJogo("aleatorio")
 );
+
 
 btnDefinicao.addEventListener(
     "click",
-    () => iniciarJogo("definicao")
+    () =>
+        iniciarJogo("definicao")
 );
+
+
+/* =========================================================
+   BOTÃO JOGAR
+   ========================================================= */
+
 btnSalvarNome.addEventListener(
     "click",
     salvarNome
 );
 
+
+/* =========================================================
+   BOTÃO RANKING
+   ========================================================= */
+
 btnRanking.addEventListener(
     "click",
     mostrarRanking
 );
+
+
+/* =========================================================
+   FECHAR RANKING
+   ========================================================= */
 
 fecharRanking.addEventListener(
     "click",
@@ -932,6 +1501,5 @@ fecharRanking.addEventListener(
         rankingModal.classList.remove(
             "ativo"
         );
-
     }
 );
